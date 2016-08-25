@@ -2,17 +2,34 @@ var http = require('http');
 var fs = require('fs');
 var api = require("./api.js");
 var url = require("url");
+const express = require("express");
+const db = require("./database.js");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 const PORT=8080; 
 
+const app = express();
+app.use(cookieParser());
+app.use(bodyParser.json());
+
 function respondFile(fileName, res) {
 	fs.readFile(fileName, function(err, data) {
-		res.writeHead(200);
+		if (err) {
+			writehead(500);
+			res.end();
+			return;
+		}
 		res.end(data);
 	});
 }
 
-function respondScripts(res) {
+app.get("/style.css", function(req, res) {
+	res.writeHead(200, {"Content-type" : "text/css"});
+	respondFile("style.css", res);
+});
+app.get("/script.js", function(req,res) {
+	res.writeHead(200, {"Content-type": "text/javascript"});
 	fs.readdir("client", function(err, files) {
 		var tosend = files.length;
 		for (var i in files) {
@@ -28,39 +45,44 @@ function respondScripts(res) {
 			});
 		}
 	});
-}
-
-function handleSearch(req, res) {
-	var query = url.parse(req.url, true).query;
-	res.writeHead(200, {"Content-Type" : "application/json"});
-	if (!query || !("q" in query)) {
-		res.end("error");
-		return;
-	}
-	var q = query.q;
-	console.log("q", q);
-	api.search(q, function(err, data) {
-		if (err) {
-			console.log("search error", err);
-		}
-		res.end(JSON.stringify(data));
-	});
-}
-
-var server = http.createServer(function(req, res) {
-	console.log("url", req.url);
-	if (req.url == "/")
-		respondFile("index.html", res);
-	else if (req.url == "/script.js")
-		respondScripts(res);
-	else if (req.url == "/style.css")
-		respondFile("style.css", res);
-	else if (req.url.match(/^\/search/))
-		handleSearch(req, res);
-	else
-		res.end();
 });
 
-server.listen(PORT, function(){
+app.get("/", function(req, res) {
+	respondFile("index.html", res);
+});
+
+function respondJSON(res) {
+	return function(err, data) {
+		if (err) {
+			res.json(err);
+		}
+		res.json(data);
+	}
+}
+
+app.get("/search", function(req, res) {
+	if (!("q" in req.query)) {
+		res.end(JSON.stringify({"error" : "no query string"}));
+		return;
+	}
+	api.search(req.query.q, respondJSON(res));
+});
+
+app.get("/playlists", function(req, res) {
+	db.getPlaylists(req.cookies.data, respondJSON(res));
+});
+app.get("/playlist", function(req, res) {
+	db.getPlaylist(req.cookies.data, req.query.pl, respondJSON(res));
+});
+app.post("/playlist", function(req, res) {
+	console.log("saving playlist");
+	db.savePlaylist(req.cookies.data, req.body);	
+	res.json({"saved" : true});
+});
+app.post("/suggest", function(req, res) {
+	api.suggest(req.body, respondJSON(res));
+});
+
+app.listen(PORT, function(){
 	console.log("Server listening on: http://localhost:%s", PORT);
 });

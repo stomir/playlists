@@ -55,6 +55,16 @@ var cr = (function() {
             el.txt = function(string) {
                 el.appendChild(document.createTextNode(string));
             };
+            el.inside = function(func) {
+                var old = context;
+                context = el;
+                func();
+                context = old;
+            }
+            el.clear = function() {
+                while (el.firstChild)
+                    el.removeChild(el.firstChild);
+            }
             
             return el;
         }
@@ -91,7 +101,7 @@ var cr = (function() {
         section : generator('section'),
         select : generator('select', ['name', 'value']),
         span : generator('span'),
-        
+        iframe : generator('iframe', ['src']), 
     }
 
 })();

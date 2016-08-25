@@ -20,3 +20,15 @@ module.exports.search = function(q, callback) {
 		}
 	)
 }
+
+module.exports.suggest = function(song, cb) {
+	yt.search.list({"auth" : API_KEY, type : "video", part : "id,snippet", relatedToVideoId : song.videoId, videoEmbeddable : "true", maxResults:1},
+		function(err, data) {
+			if (err) return cb(err, null);
+			var ret = {
+				videoId : data.items[0].id.videoId,
+				title : data.items[0].snippet.title,
+			}
+			cb(null, ret);
+		});
+}

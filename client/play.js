@@ -16,7 +16,6 @@ function playBody() {
                 onStateChange : function(event) {
                     if (event.data == YT.PlayerState.ENDED) {
                         currentPlayState = currentPlayMode(currentSong, currentPlayState, currentPlaylist);
-                        console.log("new state", currentPlayState);
                     }
                 },
             }
@@ -78,7 +77,7 @@ var playmode = {
         var nextSong = lastSong;
         if (playlist.songs.length <= 1)
             return playNow(playlist.songs[0]);
-        while (nextSong.videoId == lastSong.videoId) {
+        while (nextSong == lastSong) {
             var idx = Math.floor(Math.random() * playlist.songs.length);
             nextSong = playlist.songs[idx];
         }
@@ -94,6 +93,14 @@ var playmode = {
             playNow(data);
         });
         return true;
+    },
+    randomOrSuggest : function(lastSong, nothing, playlist) {
+        currentPlayModeName = "random or suggestion"
+        if (Math.random() < 0.4)
+            playmode.followSuggestions(lastSong, true, playlist);
+        else
+            playmode.randomSong(lastSong, null, playlist);
+        return null;
     },
 };
 

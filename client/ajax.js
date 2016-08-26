@@ -2,7 +2,6 @@ function ajaxRequest(method, url, jsonInput, callback) {
 	var conn = new XMLHttpRequest();
 	conn.onreadystatechange = function() {
 		if (conn.readyState == 4) {
-			console.log("ajax done");
 			var jsonOutput;
 			var caught = false;
 			try {

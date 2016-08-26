@@ -30,7 +30,6 @@ function viewBody() {
                 for (var name in data) {
                     (function(playlist) {
                         cr.li(function() {
-                            console.log(viewedPlaylist);
                             if (viewedPlaylist == null || name == viewedPlaylistName) 
                                 selectPlaylist(playlist);
                             cr.a("#", name).onclick = function() {

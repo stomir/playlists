@@ -7,7 +7,7 @@ const db = require("./database.js");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
-const PORT=8080; 
+const PORT= require("./config.js").port;
 
 const app = express();
 app.use(cookieParser());
@@ -75,7 +75,6 @@ app.get("/playlist", function(req, res) {
 	db.getPlaylist(req.cookies.data, req.query.pl, respondJSON(res));
 });
 app.post("/playlist", function(req, res) {
-	console.log("saving playlist");
 	db.savePlaylist(req.cookies.data, req.body);	
 	res.json({"saved" : true});
 });

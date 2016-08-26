@@ -57,7 +57,7 @@ ul.menu input {
 }
 
 div.main {
-	overflow: scroll;
+	overflow: auto;
 }
 
 a {

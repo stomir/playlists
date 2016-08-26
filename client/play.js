@@ -107,11 +107,14 @@ var playmode = {
 function playButtonFunction() {
     playButton.style.display = "none";
     pauseButton.style.display = "list-item";
+    if (currentSong)
+        document.title = "\u25B6 " + currentSong.tetle + " - playlists";
     ytPlayer.playVideo();
 }
 function pauseButtonFunction() {
     pauseButton.style.display = "none";
     playButton.style.display = "list-item";
+    document.title = "\u23f8 " + currentSong.title + " - playlists";
     ytPlayer.pauseVideo();
 }
 

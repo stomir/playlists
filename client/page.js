@@ -96,6 +96,7 @@ function songLi(song, playlist) {
 						cr.form(function() {
 							input = cr.input({class:"dropped"});
 						}).onsubmit = function() {
+                                                        addToDropdown.classList.remove("show");
 							ajax.get("/playlist?pl=" + input.value, function(err, data) {
 								data.songs.push(song);
 								ajax.post("/playlist", data, refreshView);

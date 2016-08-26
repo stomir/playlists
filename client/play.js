@@ -108,13 +108,13 @@ function playButtonFunction() {
     playButton.style.display = "none";
     pauseButton.style.display = "list-item";
     if (currentSong)
-        document.title = "\u25B6 " + currentSong.tetle + " - playlists";
+        document.title = "\u25B6 " + currentSong.title + " - playlists";
     ytPlayer.playVideo();
 }
 function pauseButtonFunction() {
     pauseButton.style.display = "none";
     playButton.style.display = "list-item";
-    document.title = "\u23f8 " + currentSong.title + " - playlists";
+    document.title = "\u2759\u2759 " + currentSong.title + " - playlists";
     ytPlayer.pauseVideo();
 }
 

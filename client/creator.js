@@ -35,7 +35,7 @@ var cr = (function() {
                 if (typeof(arguments[i]) == 'function') {
                     var oldcontext = context;
                     context = el;
-                    arguments[i]();
+                    arguments[i].call(context);
                     context = oldcontext;
                     skipped++;
                 } else if (typeof (arguments[i]) == 'object') {
@@ -58,7 +58,7 @@ var cr = (function() {
             el.inside = function(func) {
                 var old = context;
                 context = el;
-                func();
+                func.call(el);
                 context = old;
             }
             el.clear = function() {
@@ -72,6 +72,7 @@ var cr = (function() {
     
     return {
         setContext : function(cntx) { context = cntx; },
+        getContext : function() { return context; },
         
         text : text,
         a : generator('a', ['href']),
@@ -102,6 +103,8 @@ var cr = (function() {
         select : generator('select', ['name', 'value']),
         span : generator('span'),
         iframe : generator('iframe', ['src']), 
+
+        inBody : function(f) { context = document.body; f.call(document.body); },
     }
 
 })();

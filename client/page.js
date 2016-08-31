@@ -1,61 +1,77 @@
 var playButton, pauseButton;
 var songNameLi, playModeNameLi, playlistNameLi;
+var searchDiv;
+var putVolume;
 
 window.onload = function() {
 	getCookie();
 	with (cr) {
-	setContext(document.body);
-	var divs = [];
+                inBody(function() {
+                        var divs = [];
 
-	function showDiv(div) {
-		return function() {
-			for (var i in divs)
-				divs[i].style.display = (i == div) ? 'block' : 'none';
-		};
-	}
+                        function showDiv(div) {
+                                return function() {
+                                        for (var i in divs)
+                                                divs[i].style.display = (i == div) ? 'block' : 'none';
+                                };
+                        }
 
-	ul({ class : "menu" }, function() {
-		pauseButton = li(function() { a('#', 'pause').onclick = pauseButtonFunction; });
-		playButton = li(function() { a('#', 'play').onclick = playButtonFunction; });
-		li(function() { a('#', 'next').onclick = nextSong; });
-		li(function() { a('#', 'view').onclick = showDiv(2); });
-		li(function() { a('#', 'history').onclick = showDiv(3); });
-		li(function() { a('#', 'search').onclick = showDiv(1); });
-		songNameLi = li({class: "songName"});
-		playlistNameLi = li({class:"playlistName"});
-		playModeNameLi = li({class:"playModeName"});
-		
-		pauseButton.style.display = "none";
+                        div({class:"wrapper"}, function() {
+                                ul({ class : "menu" }, function() {
+                                        pauseButton = li(function() { a('#', 'pause').onclick = pauseButtonFunction; });
+                                        playButton = li(function() { a('#', 'play').onclick = playButtonFunction; });
+                                        li(function() { a('#', 'next').onclick = nextSong; });
+                                        li(function() { a('#', 'view').onclick = showDiv(2); });
+                                        li(function() { a('#', 'history').onclick = showDiv(3); });
+                                        li(function() { a('#', 'search').onclick = showDiv(1); });
+                                        songNameLi = li({class: "songName"});
+                                        playlistNameLi = li({class:"playlistName"});
+                                        playModeNameLi = li({class:"playModeName"});
 
-		li({"style" : "float:right"}, function() {
-			var userA = a('#', 'user');
-			var userInput;
-			userA.onclick = function () {
-				userA.style.display = "none";
-				userForm.style.display = "list-item";
-				userInput.value = getCookie();
-			}
-			var userForm = form(function() {
-				userInput = input();
-			});
-			userForm.style.display = "none";
-			userForm.onsubmit = function() {
-				userA.style.display = "list-item";
-				userForm.style.display = "none";
-				saveCookie(userInput.value);
-				refreshView();
-				return false;
-			}
-		});
-	});
+                                        li(function() {
+                                            var scrollable = div({style:"overflow-x:scroll; width: 100px;"}, function() {
+                                                div({style:"width: 200px"}, ".");
+                                            });
+                                            scrollable.onscroll = function() {
+                                                setVolume(100 * scrollable.scrollLeft / scrollable.scrollLeftMax);
+                                            }
+                                            putVolume = function(n) {
+                                                scrollable.scrollLeft = scrollable.scrollLeftMax * n / 100;
+                                            }
+                                        });
+                                        
+                                        pauseButton.style.display = "none";
 
-	divs.push(div({class : "main"}, playBody));
-	divs.push(div({class : "main"}, searchBody));
-	divs.push(div({class : "main"}, viewBody));
-	divs.push(div({class : "main"}, historyBody));
-	showDiv(2)();
+                                        li({"style" : "float:right"}, function() {
+                                                var userA = a('#', 'user');
+                                                var userInput;
+                                                userA.onclick = function () {
+                                                        userA.style.display = "none";
+                                                        userForm.style.display = "list-item";
+                                                        userInput.value = getCookie();
+                                                }
+                                                var userForm = form(function() {
+                                                        userInput = input();
+                                                });
+                                                userForm.style.display = "none";
+                                                userForm.onsubmit = function() {
+                                                        userA.style.display = "list-item";
+                                                        userForm.style.display = "none";
+                                                        saveCookie(userInput.value);
+                                                        refreshView();
+                                                        return false;
+                                                }
+                                        });
+                                });
 
-	}
+                                divs.push(div({class : "main"}, playBody));
+                                divs.push(searchDiv = div({class : "main"}, searchBody));
+                                divs.push(div({class : "main"}, viewBody));
+                                divs.push(div({class : "main"}, historyBody));
+                                showDiv(2)();
+                        });
+                });
+        }
 }
 
 function songLi(song, playlist) {

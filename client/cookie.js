@@ -12,16 +12,15 @@ function getCookie() {
 		while (c.charAt(0)==' ') c = c.substring(1);
 		if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
 	}
-	var ck = generateCookie();
+	var ck = generateCookie(16);
     saveCookie(ck);
     return ck;
 }
 
-function generateCookie() {
+function randomString(n) {
     var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-	var string_length = 16;
 	var randomstring = '';
-	for (var i=0; i<string_length; i++) {
+	for (var i=0; i<n; i++) {
 		var rnum = Math.floor(Math.random() * chars.length);
 		randomstring += chars[rnum];
 	}

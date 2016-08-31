@@ -7,11 +7,14 @@ var currentPlayModeName = "";
 var currentPlayState = null;
 var currentPlaylist = null;
 
+var setVolume;
+
 function playBody() {
         var div = cr.div({class : "play"});
         ytPlayer = new YT.Player(div, {
             events : {
                 onReady : function() {
+                    putVolume(ytPlayer.getVolume());
                 },
                 onStateChange : function(event) {
                     if (event.data == YT.PlayerState.ENDED) {
@@ -20,6 +23,10 @@ function playBody() {
                 },
             }
         });
+}
+
+function setVolume(n) {
+    if (ytPlayer) ytPlayer.setVolume(n);
 }
 
 function historyBody() {
@@ -34,7 +41,6 @@ function playNow(song, playlist, number) {
     ytPlayer.loadVideoById(song.videoId);
     playButtonFunction();
     songNameLi.innerHTML = song.title;
-    playModeNameLi.innerHTML = currentPlayModeName;
 }
 
 function nextSong() {
@@ -45,6 +51,7 @@ function setPlayMode(playmode) {
     currentPlayMode = playmode;
     currentPlayState = null;
     nextSong();
+    playModeNameLi.innerHTML = currentPlayModeName;
 }
 
 function setCurrentPlaylist(playlist) {
@@ -58,8 +65,8 @@ var playmode = {
 		return null;
 	},
 	repeatSingle : function(lastSong, innerInfo, playlist) {
-		playNow(lastSong);
         currentPlayModeName = "repeat single track";
+		playNow(lastSong);
         return null;
 	},
     loop : function(lastSong, number, playlist) {

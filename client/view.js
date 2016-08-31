@@ -49,6 +49,23 @@ function viewBody() {
                                 playNow(playlist.songs[0])
                                 setPlayMode(playmode.randomSong);
                             }
+                            cr.text(" | ");
+                            var shareDropdown;
+                            var shareLinkInput;
+                            cr.a("#", "share", {class:"dropdown"}, function() {
+                                shareDropdown = cr.div({class:"dropdown"}, function() {
+                                    shareLinkInput = cr.input("text", {width: 64});
+                                });
+                            }).onclick = function() {
+                                var shareLinkLength = 64;
+                                var shareLink = randomString(shareLinkLength);
+                                shareLinkInput.value = shareLink;
+                                ajax.post("/share", {playlist:playlist, shareLink:shareLink}, function(err, data) {
+                                    if (!data) return;
+                                    shareDropdown.classList.add("show");
+                                    shareLinkInput.setSelectionRange(0, shareLinkLength);
+                                });
+                            }
                         })
                     })(data[name]);
                 }

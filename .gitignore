@@ -2,3 +2,6 @@ node_modules
 .vscode
 database.json
 config.js
+*.swp
+*.swo
+*~

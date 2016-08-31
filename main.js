@@ -65,7 +65,7 @@ app.get("/search", function(req, res) {
 		res.end(JSON.stringify({"error" : "no query string"}));
 		return;
 	}
-	api.search(req.query.q, respondJSON(res));
+	api.search(req.query.q, (req.query.pageToken ? req.query.pageToken : false), respondJSON(res));
 });
 
 app.get("/playlists", function(req, res) {
@@ -80,6 +80,12 @@ app.post("/playlist", function(req, res) {
 });
 app.post("/suggest", function(req, res) {
 	api.suggest(req.body, respondJSON(res));
+});
+app.post("/share", function(req, res) {
+    respondJSON(res)(db.share(req.cookies.data, req.body.playlist, req.body.shareLink));
+});
+app.post("/follow", function(req, res) {
+    respondJSON(res)(db.follow(req.cookies.data, req.body.shareLink));
 });
 
 app.listen(PORT, function(){
